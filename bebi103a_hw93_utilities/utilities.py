@@ -327,7 +327,6 @@ def get_bs_sample_parametric_two_rate_gamma(data, size=1000, n_jobs=1, progress_
     
     return bs_reps, conf_ints
 
-
 def draw_gamma_samples(alpha, beta, size):
     time_samples = np.empty(size)
     𝛼 = alpha
@@ -338,7 +337,9 @@ def draw_gamma_samples(alpha, beta, size):
         
     return time_samples
 
+
 rg = np.random.default_rng()
+
 
 def draw_two_rate_gamma_samples(beta1, beta2, size):
     time_samples = np.empty(size)
@@ -349,10 +350,6 @@ def draw_two_rate_gamma_samples(beta1, beta2, size):
         time_samples[i] = rg.exponential(1 / 𝛽1) + rg.exponential(1 / 𝛽2)
         
     return time_samples
-
-two_rate_gamma_samples = np.array(
-    [draw_two_rate_gamma_samples(beta_1_12_um, beta_2_12_um, size=len(tubulin_12_um)) for _ in range(1000)]
-)
 
 
 def gen_summaries_gamma(data, fun=np.mean):
@@ -388,13 +385,21 @@ def gen_summaries_gamma(data, fun=np.mean):
     
     return summaries
 
+
+
 def nonparametric_two_rate_bs_MLE(data, n_replicates):
+    def get_bs_sample_nonparametric(arr):
+        '''Generate nonparametric bootstrap replicates'''
+        return np.random.choice(arr, size=len(arr), replace=True)
+
+
     # Bootstrap for parameters
     return np.vstack([
         mle_two_rate_gamma(
             get_bs_sample_nonparametric(data)
         ) for _ in tq.tqdm(range(n_replicates), unit='replicates')
     ])
+
 
 def gen_summaries(data, fun=np.mean):
     '''Generate conf_int summaries
